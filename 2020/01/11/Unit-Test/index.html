@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="单元测试,ios," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文主要侧重于如何在开发过程中使用XCode自带OCUnit框架来做单元测试  ##一、单元测试概述###什么是单元测试单元测试是开发者编写的一小段代码，用于检验被测代码的一个很小的、很明确的功能是否正确。通常而言，一个单元测试是用于判断某个特定条件（或者场景）下某个特定函数的行为。###为什么要单元测试单元测试是由程序员自己来完成，最终受益的也是程序员自己。可以这么说，程序员有责任编写功能代码">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单元测试">
+<meta property="og:url" content="http://yoursite.com/2020/01/11/Unit-Test/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本文主要侧重于如何在开发过程中使用XCode自带OCUnit框架来做单元测试  ##一、单元测试概述###什么是单元测试单元测试是开发者编写的一小段代码，用于检验被测代码的一个很小的、很明确的功能是否正确。通常而言，一个单元测试是用于判断某个特定条件（或者场景）下某个特定函数的行为。###为什么要单元测试单元测试是由程序员自己来完成，最终受益的也是程序员自己。可以这么说，程序员有责任编写功能代码">
+<meta property="article:published_time" content="2020-01-11T10:27:32.000Z">
+<meta property="article:modified_time" content="2020-01-12T12:25:03.992Z">
+<meta property="article:author" content="wupeng">
+<meta property="article:tag" content="单元测试">
+<meta property="article:tag" content="ios">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/11/Unit-Test/"/>
+
+
+
+
+
+  <title>单元测试 | Hexo</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?dd5753eacc6b87526ef1242989d0b938";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/home/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/book/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
+            
+            书籍
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/11/Unit-Test/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wupeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">单元测试</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-11T18:27:32+08:00">
+                2020-01-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" itemprop="url" rel="index">
+                    <span itemprop="name">单元测试</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2.7k
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>本文主要侧重于如何在开发过程中使用XCode自带OCUnit框架来做单元测试</p>
+</blockquote>
+<p>##一、单元测试概述<br>###什么是单元测试<br><strong>单元测试</strong>是开发者编写的一小段代码，用于检验被测代码的一个很小的、很明确的功能是否正确。通常而言，一个单元测试是用于判断某个特定条件（或者场景）下某个特定函数的行为。<br>###为什么要单元测试<br>单元测试是由程序员自己来完成，最终受益的也是程序员自己。可以这么说，程序员有责任编写功能代码，同时也就有责任为自己的代码编写单元测试。执行单元测试，就是为了证明这段代码的行为和我们期望的一致。很多人认为编写单元测试没有用，认为单元测试并不能保证一定减少bug发生的几率，反而会由于编写单元测试花费一定的时间与精力。客观的说，造成这种原因是程序员本身的水平不够高。我认为单元测试带来的巨大好处的必要条件如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">项目认知--是否正确理解项目需求</span><br><span class="line">项目质量--是否稳定，是否长期多版本，是否需要面对较多变化</span><br><span class="line">编程水平--是否有较多的代码经验，是否熟练掌握架构</span><br></pre></td></tr></table></figure>
+<p>如果程序员水平比较高，对需求理解较为清晰，项目需要面对较多的变化，那么毫无疑问单元测试对于软件非常有益。假如软件功能简单且开发周期短，不需要镜像复杂的维护工作，那么单元测试的一些不大。</p>
+<p>###单元测试的优缺点</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">优点</span><br><span class="line">1. 好的单元测试就是一份好的文档，并且次文档更为程序员所接受，</span><br><span class="line">   它直接描述了测试员对受测代码结果的预期，更快地知道代码是否正常。</span><br><span class="line">2. 当代码由别人维护时（或自己重构时），通过单元测试的约束，</span><br><span class="line">   可以保证在加入新功能或修改旧功能时代码的正确性，使程序员优化代码更自信。</span><br><span class="line">3. 让开发者写的代码更有可测性</span><br><span class="line">4. 代码重构后可以减少回归性测试带来的新问题，可以使开发流程更容易掌控</span><br><span class="line">5. 让代码变得更可维护和传承</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">缺点</span><br><span class="line">1. 写更多代码</span><br><span class="line">2. 更多的维护</span><br><span class="line">3. 更多时间</span><br><span class="line">4. 需要我们思考某个功能细节更清楚</span><br></pre></td></tr></table></figure>
+
+<p>###二、iOS单元测试概述<br>其实iOS单元测试很简单，本质上就是用一些断言来判定结果，而这种方式是如何应用到复杂交互界面测试上呢？我们要做的事将客户端代码转化为易于测试的代码，什么样的代码易于测试呢？它至少应该是这样的：</p>
+<ol>
+<li>被测试方法需要产生可测量的结果。</li>
+<li>类之间的关系应该是松耦合的。</li>
+</ol>
+<p>其中第一条是必要条件。使用断言这种形式指明了测试的方法最终要产生可以度量的结果。因而我们需要尽量的将展示代码和业务逻辑分开。展示代码是没法测试的，历史有的方法只是播放动画。而业务逻辑最终都会造成一些数据的改变，这是很容易测试的。<br>最为一个iOS程序员，首先要了解MVC然后例如MVVM、MVP等等模式，在APP中运用这些设计模式，这样才能设计出较好的易于单元测试的结构。另外加我们也需要不断的重构代码，不断的完善代码，这样才会更加适合单元测试。</p>
+<p>iOS的测试框架比如 <code>OCUnit</code>、<code>GTM</code>、<code>GHUnit</code>、<code>CATCH</code>、<code>OCMock</code>,但是目前来说使用OCUnit就足够了使用了。作为苹果官方提供的测试框架，它最大的优点就是简单易用。<br>####2.1.1使用伪造类避免对其它类的依赖<br>加入某个被测试的方法声明是这样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void)xxxx:(Person *)person;</span><br></pre></td></tr></table></figure>
+<p>如果测试时传入Person的话，就造成了测试类依赖于两个类。当由于person中的错误引测试不通过时，就不能迅速的定位到首测类中是否有问题。遇到这种情况，就可以使用伪造类。加入方法中只使用了person的一个属性name，那么可以将方法名重构为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void)xxxx:(id)person;(此处id有待商榷，只是这样做最简单)</span><br></pre></td></tr></table></figure>
+<p>然后在单元测试的target中添加只包含name属性的fakePerson来作为伪造类。这样，一旦发生错误就可以迅速的推测出错误的来源。</p>
+<p>####2.1.2使用伪造环境避免其它环境的干扰<br>适用于异步的方法测试.经常遇到的一种情况是测试有网络环境的代码，由于异步的存在，这会造成测试代码不好写。一种简单的解决办法是，我们假定网络一定是通畅的，那么我们测试的代码分为两部分，及拼装发送功能和接收解析功能。加入发送和接收功能都能通过测试，那么我们大概可以确定这个异步方法的正确性。临沂中方法是使用GHUnit，它支持异步代码的测试。<br>####2.2测试用例（方法）名应该是自解释且独立的<br>如果被测试类名是xxx，那么测试类可以命名为xxxTests。而对于其中要测试的功能，命名应该是自解释的。这可以在发现错误时尽快的定位问题所在。例如，如果某个obj非空，那么我们可以将其命名为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void)testObjNotNil&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每个方法目标应该是单一的，大多数情况下每个方法内都只有一个断言语句；方法不应该依赖其它方法的结果作为输入，保证原子性。<br>####2.3断言语句需要解释测试者的意图<br>每种单元测试框架都提供了很多断言语句，从根本上来说它们都是一样的。但是测试者需要根据自己的目的选择适当的语句，这样才可以让别人阅读测试代码时理解设计用例的目的。例如STAssertNil和STAssertNotNil等等。</p>
+<p>####2.4判断某个意图有没有达到的很好的方法是检测方法影响的数据有没有合理的变化。<br>由于单元测试是使用断言语句来判断的，因而最容易做的就是判断数据的变化。这也就限定了单元测试的方法范围，即引起数据变化的方法。对于一些纯展示的方法，例如播放一段特效，这种方法是无法靠单元测试来进行约束的。测试数据的特性包刮取值范围（int、float等），排列顺序等等。</p>
+<p>2.5运用重构的手段使方法变得易于被测试。<br>单元测试是保障重构安全的手段，重构也可以是代码易于被测试。<br>什么样的代码容易进行单元测试的？最简单的一点就是，每个被测试方法都应该是功能单一的。当然，这也是代码规范中应该做到的，方法的功能单一，则测试方法的断言也会比较好确定。如果你发现某个方法很难进行测试，那么就应该进行拆分重构。</p>
+<p>##三、一般流程<br>使用OCUnit最大的好处就是流程非常的简单，简单到让你觉得非常愉悦。由于有XCode的支持，添加测试变得异常简单。只要在新建工程师勾选“Include Unit Test”，就会自动加入一个示例。然后在需要添加的新的单元测试时，新建一个“Objective-C test case class”就可以了。<br>测试文件中只要知道setup是初始化的地方，tearDown是结束清理的地方，而且它们在没个示例方法执行是都会重新执行–保证测试用例的原子性。然后知道每个测试用例都是以test作为前缀，并且无返回值。然后在方法中编写断言就可以了。</p>
+<p>##四、测试驱动（TDD）<br>冥界当中提到了TDD这种开发方式。TDD的主旨是使开发者对其编写的代码更有信心，使开发者修改代码心里更加踏实。对于其总结，还是引用原文比较妥当：“测试驱动开发的妙趣在于，它以需求为引领，通过测试的形式，来指导开发者进行软件开发的设计与架构，并编写出最为精炼的代码，使得测试用例运行通过。经过适当的重构之后，测试用例与产品代码可达到较为健康的状态。”也就是上面提到的，通过自上而下的形式设计类，通过单元的事来不停地审视和重构类，从而达到代码的健康。<br>如果在代码写完之后编写单元测试，那么久体现不出这种模式的好处。这就好像写完代码后再补文档一样，没有什么意义。测试应该在代码开始之前，或者在代码编写中不停地进行编写更新，这样才能是代码不停进步，这也正是TDD的意思。</p>
+<p>##六、总结<br>单元测试的代码很简单，到那时想写好单元测试却并不是一件简单的事情。它需要程序员比较深的功底。在开始尝试TDD之前可以多阅读官方文档，多看看WWDC的PPT，也可以借鉴一些第三方的单元测试比如AFNetworking、SDWebimage。由于个人水平有限，有一些东西说的比较啰嗦，希望有大佬可以一起沟通。把复杂问题简单化，任重而道远。希望大家可以在日常开发中运用好这种简洁高效的技术。本文更偏重概念一些，我会在随后的文章做一些单元测试相关的示例。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95/" rel="tag"># 单元测试</a>
+          
+            <a href="/tags/ios/" rel="tag"># ios</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/11/navBar/" rel="next" title="解决ios10导航栏底部阴影线条隐藏失效问题">
+                <i class="fa fa-chevron-left"></i> 解决ios10导航栏底部阴影线条隐藏失效问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/01/11/SNRouter/" rel="prev" title="店+组件化实践之路由">
+                店+组件化实践之路由 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">wupeng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wupeng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="路由,ios," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="##一 路由需要做两件事 路由本质上来讲是实现了某种”关系映射”,这种”关系映射”理念其实很常见的.比如在ios中Dictionary可以通过一个key获取对应的value,在Android中的map也是同理.显而易见,这种”关系映射”是一对一映射,而且必须是一对一映射,这一点会稍后重点介绍.属于中间件的路由需要处理两种”关系映射”,一是通过key获取某个实例,二是通过key获取某个”代码块”(一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="店+组件化实践之路由">
+<meta property="og:url" content="http://yoursite.com/2020/01/11/SNRouter/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="##一 路由需要做两件事 路由本质上来讲是实现了某种”关系映射”,这种”关系映射”理念其实很常见的.比如在ios中Dictionary可以通过一个key获取对应的value,在Android中的map也是同理.显而易见,这种”关系映射”是一对一映射,而且必须是一对一映射,这一点会稍后重点介绍.属于中间件的路由需要处理两种”关系映射”,一是通过key获取某个实例,二是通过key获取某个”代码块”(一">
+<meta property="og:image" content="http://yoursite.com/Users/wupeng/Desktop/Project/ProjectImage/%E8%B7%AF%E7%94%B1%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+<meta property="article:published_time" content="2020-01-11T10:27:32.000Z">
+<meta property="article:modified_time" content="2020-01-12T12:25:17.743Z">
+<meta property="article:author" content="wupeng">
+<meta property="article:tag" content="路由">
+<meta property="article:tag" content="ios">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/Users/wupeng/Desktop/Project/ProjectImage/%E8%B7%AF%E7%94%B1%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/11/SNRouter/"/>
+
+
+
+
+
+  <title>店+组件化实践之路由 | Hexo</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?dd5753eacc6b87526ef1242989d0b938";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/home/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book">
+          <a href="/book/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-book"></i> <br />
+            
+            书籍
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-resources" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/11/SNRouter/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="wupeng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">店+组件化实践之路由</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-11T18:27:32+08:00">
+                2020-01-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%B7%AF%E7%94%B1/" itemprop="url" rel="index">
+                    <span itemprop="name">路由</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.7k
+                </span>
+              
+
+              
+
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>##一 路由需要做两件事</p>
+<p>路由本质上来讲是实现了某种”关系映射”,这种”关系映射”理念其实很常见的.比如在ios中Dictionary可以通过一个key获取对应的value,在Android中的map也是同理.显而易见,这种”关系映射”是一对一映射,而且必须是一对一映射,这一点会稍后重点介绍.属于中间件的路由需要处理两种”关系映射”,一是通过key获取某个实例,二是通过key获取某个”代码块”(一是二的子集),这个代码块不限于某种形式可以使block、sel等等.</p>
+<p>1.获取某个实例</p>
+<pre><code>在ios中我将这种实例理解为具体的UIViewController,这是需要&quot;转场&quot;的实例.</code></pre><p>2.获取某个”代码块”</p>
+<pre><code>&quot;代码块&quot;可是使用某个对象的SEL来实现</code></pre><p>##二 路由思维导图</p>
+<p><img src="/Users/wupeng/Desktop/Project/ProjectImage/%E8%B7%AF%E7%94%B1%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt="路由思维导图"></p>
+<p>###2.1 SNRouter说明<br>主要负责转场相关的映射关系,本着简单易用灵活多变的原则,将这个过程所需要的东西比如参数传递、回调、转场方式等通过链式语法参数化.</p>
+<p>####2.1.1 target说明<br>1.targetPath路径映射,内部会维护一个二级字典.这个字典的key是对应的优先级,value是对应key的字典.调用者通过链式target(targetPath)来指定目标.目前店+自己的策略是通过 <strong>路由码</strong> (一个int值)来映射唯一识别的VC,所以在SNRouterPathPolicyDefault下的key是一个NSNumber类型.当然这个key自己可以随意使用.<br>之所以添加target(NSInterger targetPath),参数为NSInterger类型而不是NSNumber,是为了方便调用时不用转化.<br>但是如果是自定义的非NSNumber类型,比如NSString,等等在调用时需要使用targetId(id target)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">typedef NS_ENUM(NSUInteger, SNRouterPathPolicy) &#123;</span><br><span class="line">    &#x2F;** 店+map映射等级,为了避免异常,原则上不允许其它平台使用default*&#x2F;</span><br><span class="line">    SNRouterPathPolicyDefault,</span><br><span class="line">    SNRouterPathPolicyLow,</span><br><span class="line">    SNRouterPathPolicyMiddle,</span><br><span class="line">    SNRouterPathPolicyHigh,</span><br><span class="line">    SNRouterPathPolicyMAX</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"> @&#123;</span><br><span class="line"> @(SNRouterPathPolicyDefault):  @&#123;@(targetPath): @&quot;value&quot;, ...&#125;</span><br><span class="line"> @(SNRouterPathPolicyLow)    :  @&#123;@&quot;key&quot;: @&quot;value&quot;, ...&#125;</span><br><span class="line"> @(SNRouterPathPolicyMiddle) :  @&#123;@&quot;key&quot;: @&quot;value&quot;, ...&#125;</span><br><span class="line"> @(SNRouterPathPolicyHigh)   :  @&#123;@&quot;key&quot;: @&quot;value&quot;, ...&#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>2.初始化路径映射关系</p>
+<p>这个在使用SNRouter之前必须要初始化的方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;map:自己的映射关系字典</span><br><span class="line">&#x2F;&#x2F;policy:自定义的优先级别</span><br><span class="line">&#x2F;&#x2F;注意如果同等policy在添加是如果有重复的key会直接覆盖原有的</span><br><span class="line">[ShareRouter addPathMap:(NSDictionary *)map toPolicy:(SNRouterPathPolicy)policy];;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;自定义map</span><br><span class="line">&#x2F;&#x2F;RouterPathMap:将RouterPath映射成ViewController</span><br><span class="line">另外写了Router的Category,来添加映射关系,为了更加便于阅读,将每个组件隔离开来,</span><br><span class="line">然后通过NSDictory+Add的category来使字典相加,获取所有的map映射关系.</span><br><span class="line">- (NSDictionary *)maps &#123;</span><br><span class="line">    NSDictionary *module00 &#x3D; [NSDictionary dictionary];</span><br><span class="line">    NSDictionary *module01 &#x3D; [NSDictionary dictionary];</span><br><span class="line">    NSDictionary *module02 &#x3D; [NSDictionary dictionary];</span><br><span class="line">    NSDictionary *module03 &#x3D; [NSDictionary dictionary];</span><br><span class="line">   </span><br><span class="line">    module00 &#x3D; @&#123;</span><br><span class="line">                 @(SNRouterPath00000) : @&quot;ViewController0&quot;,</span><br><span class="line">                 @(SNRouterPath00001) : @&quot;ViewController0&quot;,</span><br><span class="line">                 @(SNRouterPath00002) : @&quot;ViewController0&quot;,</span><br><span class="line">                 @(SNRouterPath00003) : @&quot;ViewController0&quot;,</span><br><span class="line">                 @(SNRouterPath00004) : @&quot;ViewController0&quot;,</span><br><span class="line">                 &#125;;</span><br><span class="line">    module01 &#x3D; @&#123;</span><br><span class="line">                 @(SNRouterPath01000) : @&quot;ViewController1&quot;,</span><br><span class="line">                 @(SNRouterPath01001) : @&quot;ViewController1&quot;,</span><br><span class="line">                 @(SNRouterPath01002) : @&quot;ViewController1&quot;,</span><br><span class="line">                 @(SNRouterPath01003) : @&quot;ViewController1&quot;,</span><br><span class="line">                 @(SNRouterPath01004) : @&quot;ViewController1&quot;,</span><br><span class="line">                 &#125;;</span><br><span class="line">    module02 &#x3D; @&#123;</span><br><span class="line">                 @(SNRouterPath02000) : @&quot;ViewController2&quot;,</span><br><span class="line">                 @(SNRouterPath02001) : @&quot;ViewController2&quot;,</span><br><span class="line">                 @(SNRouterPath02002) : @&quot;ViewController2&quot;,</span><br><span class="line">                 @(SNRouterPath02003) : @&quot;ViewController2&quot;,</span><br><span class="line">                 @(SNRouterPath02004) : @&quot;ViewController2&quot;,</span><br><span class="line">                 &#125;;</span><br><span class="line">    module03 &#x3D; @&#123;</span><br><span class="line">                 @(SNRouterPath03000) : @&quot;ViewController3&quot;,</span><br><span class="line">                 @(SNRouterPath03001) : @&quot;ViewController3&quot;,</span><br><span class="line">                 @(SNRouterPath03002) : @&quot;ViewController3&quot;,</span><br><span class="line">                 @(SNRouterPath03003) : @&quot;ViewController3&quot;,</span><br><span class="line">                 @(SNRouterPath03004) : @&quot;ViewController3&quot;,</span><br><span class="line">                 &#125;;</span><br><span class="line">   </span><br><span class="line">   module00 &#x3D; [module00 add:module01, module02, module03, nil];</span><br><span class="line">   return module00;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>####2.1.2 参数传递说明</p>
+<p>为了方便使用者调用,使用链式语法.另外虽然ViewController是push还是present或者是其它的方式是由调用者决定的,但是我认为这个没有必要每一个地方都写同样的代码.可以把转场方式当做参数来传递,这同样是调用者决定的,所以你会看到一个非常简介的语法及调用方式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">入参,回调,转场方式,动画方式,一共四个维度,16种情况,本文不一一列出了</span><br><span class="line">&#x2F;&#x2F;push</span><br><span class="line">1.无入参,无回调</span><br><span class="line">	ShareRouter.target(SNRouterPath00001).push();</span><br><span class="line">2.无入参,有回调</span><br><span class="line">	ShareRouter.target(SNRouterPath01001).push().back(^(id data) &#123;</span><br><span class="line">            NSLog(@&quot;%@&quot;, data);</span><br><span class="line">    &#125;);</span><br><span class="line">3.有入参,无回调</span><br><span class="line">    ShareRouter.target(SNRouterPath02001)</span><br><span class="line">    .send(@&quot;有入参,无回调 入参为 nice&quot;)</span><br><span class="line">    .push();</span><br><span class="line">4.有入参,有回调</span><br><span class="line">     ShareRouter.target(SNRouterPath03001)</span><br><span class="line">     .send(@&quot;wupeng, send data&quot;).push()</span><br><span class="line">     .back(^(id data) &#123;</span><br><span class="line">         NSLog(@&quot;%@&quot;, data);</span><br><span class="line">      &#125;);</span><br><span class="line">      </span><br><span class="line">&#x2F;&#x2F;接收数据</span><br><span class="line">&#x2F;&#x2F;这里可以借鉴HHRouter将入参和回调与ViewController,动态绑定,这样</span><br><span class="line">ShareRouter.sendData &#x3D; @&quot;有入参,有回调, 入参为 wupeng&quot;;</span><br><span class="line">&#x2F;&#x2F;回调数据</span><br><span class="line">ShareRouter.backData &#x3D; @&quot;有入参,有回调, 回调为wupeng&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>注:CurrentViewController:当前ViewController.这个其实是不属于Router的,但是确实这个app共有的,是任何地方的可以调用的.由于Router需要管理转场,所以使用了CurrentViewController.这个再UIWindow+Current的category中.所以router通过获取当前vc可以直接进行转场.</p>
+<p>####2.1.3 转场方式说明</p>
+<p>1.push</p>
+<p>2.pushAnimatedNO</p>
+<p>3.present</p>
+<p>4.presentAnimatedNO</p>
+<p>5.hiddenBottomBar</p>
+<p>6.presentCompletion</p>
+<p>###2.2SNOrder说明</p>
+<p>####2.2.1target<br>通过映射机制生成target类名的实例对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> 为了处理可能存在的高频方法调用,添加自动缓存target策略</span><br><span class="line"> 减少频繁创建和销毁target,减少内存</span><br><span class="line"> 1.缓存target个数最多50个</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">&#x2F;** @&#123;@&quot;className&quot; : @&#123;@&quot;target&quot;:  target&#125;,用于是否存在 *&#x2F;</span><br><span class="line">@property (nonatomic, strong) NSMutableDictionary *targetsDic;</span><br><span class="line"></span><br><span class="line">&#x2F;** @[target1, target2] 用于指定target清除 *&#x2F;</span><br><span class="line">@property (nonatomic, strong) NSMutableArray *targetsArr;</span><br></pre></td></tr></table></figure>
+
+<p>####2.2.2action<br>通过targetName生成对应的SEL<br>####2.2.3parameter<br>action所需要的parame,如果没有,不需要传入,或者传入nil<br>####2.2.4end<br>方法执行标志</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line"> *We have a Class such as dog.</span><br><span class="line"> *We don&#39;t need import it.</span><br><span class="line"> *But we can use its method.</span><br><span class="line"> *Otherwise we&#39;d better add &quot;Target&quot; after class name</span><br><span class="line"> *such &quot;Dog&quot; -&gt; &quot;DogTarget&quot;</span><br><span class="line"> </span><br><span class="line"> *ShareOrder</span><br><span class="line"> *.target(@&quot;DogTarget&quot;)</span><br><span class="line"> *.action(@&quot;sing&quot;)</span><br><span class="line"> *.para(@&#123;@&quot;songName&quot; : @&quot;hao ri zi&quot;&#125;)</span><br><span class="line"> *.end();</span><br><span class="line"></span><br><span class="line"> *@interface DogTarget : NSObject</span><br><span class="line"> *@property (nonatomic, assign) NSInteger age;</span><br><span class="line"> *- (void)eat;</span><br><span class="line"> *- (void)sing:(NSDictionary *)songName;</span><br><span class="line"> *@end</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">+ (instancetype)order;</span><br><span class="line"></span><br><span class="line">&#x2F;** target: NSString *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNOrder *(^ target)(NSString *targetName);</span><br><span class="line"></span><br><span class="line">&#x2F;** action: NSString *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNOrder *(^ action)(NSString *acitonName);</span><br><span class="line"></span><br><span class="line">&#x2F;** para: NSDictionary *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNOrder *(^ para)(NSDictionary *para);</span><br><span class="line"></span><br><span class="line">&#x2F;** 命令参数传递结束并执行, 返回值为aciton的返回值*&#x2F;</span><br><span class="line">@property (nonatomic, strong) id (^ end)(void);</span><br></pre></td></tr></table></figure>
+
+<p>以下是SNRouter的所有参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">@interface SNRouter : NSObject</span><br><span class="line"></span><br><span class="line">&#x2F;** 目标VC获取入参数据时使用 *&#x2F;</span><br><span class="line">@property (nonatomic, strong) id sendData;</span><br><span class="line">&#x2F;** 目标VC回调数据时使用 *&#x2F;</span><br><span class="line">@property (nonatomic, strong) id backData;</span><br><span class="line">&#x2F;** 目标vcPath,目前只支持枚举SNRouterPath *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNRouter *(^ target)(NSInteger targetPath);</span><br><span class="line">@property (nonatomic, strong, readonly) SNRouter *(^ targetId)(id target);</span><br><span class="line">&#x2F;**  targetUrl只允许远程远程调用,此时sendData &#x3D; @[@&quot;权限编码&quot;, 参数 ? :@&quot;&quot;,...]*&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNRouter *(^ targetUrl)(NSString *url);</span><br><span class="line">&#x2F;** 当前VC传递入参时使用 *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNRouter *(^ send)(id data);</span><br><span class="line">&#x2F;** 当前VC获取目标VC回调数据时使用 *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNRouter *(^ back)(SendBlock back);</span><br><span class="line">&#x2F;** push animated 和 hideden bottom bar *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNRouter *(^ push)(void);</span><br><span class="line">&#x2F;** push without animation 和 hideden bottom bar *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNRouter *(^ pushAnimatedNO)(void);</span><br><span class="line">&#x2F;** present animated *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNRouter *(^ present)(void);</span><br><span class="line">&#x2F;** present without animation *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNRouter *(^ presentAnimatedNO)(void);</span><br><span class="line">&#x2F;** hidden bottom bar *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNRouter *(^ hiddenBottomBar)(BOOL hidden);</span><br><span class="line">&#x2F;** present animated completion *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNRouter *(^ presentCompletion)(dispatch_block_t completion);</span><br><span class="line"></span><br><span class="line">+ (instancetype)router;</span><br><span class="line"></span><br><span class="line">- (void)addPathMap:(NSDictionary *)map toPolicy:(SNRouterPathPolicy)policy;</span><br><span class="line"></span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E8%B7%AF%E7%94%B1/" rel="tag"># 路由</a>
+          
+            <a href="/tags/ios/" rel="tag"># ios</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/01/11/Unit-Test/" rel="next" title="单元测试">
+                <i class="fa fa-chevron-left"></i> 单元测试
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">wupeng</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wupeng</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Pisces</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
