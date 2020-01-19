@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="##一 路由需要做两件事 路由本质上来讲是实现了某种”关系映射”,这种”关系映射”理念其实很常见的.比如在ios中Dictionary可以通过一个key获取对应的value,在Android中的map也是同理.显而易见,这种”关系映射”是一对一映射,而且必须是一对一映射,这一点会稍后重点介绍.属于中间件的路由需要处理两种”关系映射”,一是通过key获取某个实例,二是通过key获取某个”代码块”(一">
+<meta name="description" content="一 路由需要做两件事路由本质上来讲是实现了某种”关系映射”,这种”关系映射”理念其实很常见的.比如在ios中Dictionary可以通过一个key获取对应的value,在Android中的map也是同理.显而易见,这种”关系映射”是一对一映射,而且必须是一对一映射,这一点会稍后重点介绍.属于中间件的路由需要处理两种”关系映射”,一是通过key获取某个实例,二是通过key获取某个”代码块”(一是二的">
 <meta property="og:type" content="article">
 <meta property="og:title" content="店+组件化实践之路由">
 <meta property="og:url" content="http://yoursite.com/2020/01/11/SNRouter/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="##一 路由需要做两件事 路由本质上来讲是实现了某种”关系映射”,这种”关系映射”理念其实很常见的.比如在ios中Dictionary可以通过一个key获取对应的value,在Android中的map也是同理.显而易见,这种”关系映射”是一对一映射,而且必须是一对一映射,这一点会稍后重点介绍.属于中间件的路由需要处理两种”关系映射”,一是通过key获取某个实例,二是通过key获取某个”代码块”(一">
+<meta property="og:description" content="一 路由需要做两件事路由本质上来讲是实现了某种”关系映射”,这种”关系映射”理念其实很常见的.比如在ios中Dictionary可以通过一个key获取对应的value,在Android中的map也是同理.显而易见,这种”关系映射”是一对一映射,而且必须是一对一映射,这一点会稍后重点介绍.属于中间件的路由需要处理两种”关系映射”,一是通过key获取某个实例,二是通过key获取某个”代码块”(一是二的">
 <meta property="og:image" content="http://yoursite.com/Users/wupeng/Desktop/Project/ProjectImage/%E8%B7%AF%E7%94%B1%E7%BB%93%E6%9E%84%E5%9B%BE.png">
 <meta property="article:published_time" content="2020-01-11T10:27:32.000Z">
-<meta property="article:modified_time" content="2020-01-12T12:25:17.743Z">
+<meta property="article:modified_time" content="2020-01-19T10:16:55.212Z">
 <meta property="article:author" content="wupeng">
 <meta property="article:tag" content="路由">
 <meta property="article:tag" content="ios">
@@ -223,6 +223,16 @@
         </li>
       
         
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />
+            
+            公益404
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-book">
           <a href="/book/" rel="section">
             
@@ -239,7 +249,6 @@
 
   
 </nav>
-
 
 
  </div>
@@ -373,14 +382,12 @@
       
 
       
-        <p>##一 路由需要做两件事</p>
-<p>路由本质上来讲是实现了某种”关系映射”,这种”关系映射”理念其实很常见的.比如在ios中Dictionary可以通过一个key获取对应的value,在Android中的map也是同理.显而易见,这种”关系映射”是一对一映射,而且必须是一对一映射,这一点会稍后重点介绍.属于中间件的路由需要处理两种”关系映射”,一是通过key获取某个实例,二是通过key获取某个”代码块”(一是二的子集),这个代码块不限于某种形式可以使block、sel等等.</p>
+        <h2 id="一-路由需要做两件事"><a href="#一-路由需要做两件事" class="headerlink" title="一 路由需要做两件事"></a>一 路由需要做两件事</h2><p>路由本质上来讲是实现了某种”关系映射”,这种”关系映射”理念其实很常见的.比如在ios中Dictionary可以通过一个key获取对应的value,在Android中的map也是同理.显而易见,这种”关系映射”是一对一映射,而且必须是一对一映射,这一点会稍后重点介绍.属于中间件的路由需要处理两种”关系映射”,一是通过key获取某个实例,二是通过key获取某个”代码块”(一是二的子集),这个代码块不限于某种形式可以使block、sel等等.</p>
 <p>1.获取某个实例</p>
 <pre><code>在ios中我将这种实例理解为具体的UIViewController,这是需要&quot;转场&quot;的实例.</code></pre><p>2.获取某个”代码块”</p>
-<pre><code>&quot;代码块&quot;可是使用某个对象的SEL来实现</code></pre><p>##二 路由思维导图</p>
-<p><img src="/Users/wupeng/Desktop/Project/ProjectImage/%E8%B7%AF%E7%94%B1%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt="路由思维导图"></p>
-<p>###2.1 SNRouter说明<br>主要负责转场相关的映射关系,本着简单易用灵活多变的原则,将这个过程所需要的东西比如参数传递、回调、转场方式等通过链式语法参数化.</p>
-<p>####2.1.1 target说明<br>1.targetPath路径映射,内部会维护一个二级字典.这个字典的key是对应的优先级,value是对应key的字典.调用者通过链式target(targetPath)来指定目标.目前店+自己的策略是通过 <strong>路由码</strong> (一个int值)来映射唯一识别的VC,所以在SNRouterPathPolicyDefault下的key是一个NSNumber类型.当然这个key自己可以随意使用.<br>之所以添加target(NSInterger targetPath),参数为NSInterger类型而不是NSNumber,是为了方便调用时不用转化.<br>但是如果是自定义的非NSNumber类型,比如NSString,等等在调用时需要使用targetId(id target)</p>
+<pre><code>&quot;代码块&quot;可是使用某个对象的SEL来实现</code></pre><h2 id="二-路由思维导图"><a href="#二-路由思维导图" class="headerlink" title="二 路由思维导图"></a>二 路由思维导图</h2><p><img src="/Users/wupeng/Desktop/Project/ProjectImage/%E8%B7%AF%E7%94%B1%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt="路由思维导图"></p>
+<h3 id="2-1-SNRouter说明"><a href="#2-1-SNRouter说明" class="headerlink" title="2.1 SNRouter说明"></a>2.1 SNRouter说明</h3><p>主要负责转场相关的映射关系,本着简单易用灵活多变的原则,将这个过程所需要的东西比如参数传递、回调、转场方式等通过链式语法参数化.</p>
+<h4 id="2-1-1-target说明"><a href="#2-1-1-target说明" class="headerlink" title="2.1.1 target说明"></a>2.1.1 target说明</h4><p>1.targetPath路径映射,内部会维护一个二级字典.这个字典的key是对应的优先级,value是对应key的字典.调用者通过链式target(targetPath)来指定目标.目前店+自己的策略是通过 <strong>路由码</strong> (一个int值)来映射唯一识别的VC,所以在SNRouterPathPolicyDefault下的key是一个NSNumber类型.当然这个key自己可以随意使用.<br>之所以添加target(NSInterger targetPath),参数为NSInterger类型而不是NSNumber,是为了方便调用时不用转化.<br>但是如果是自定义的非NSNumber类型,比如NSString,等等在调用时需要使用targetId(id target)</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">typedef NS_ENUM(NSUInteger, SNRouterPathPolicy) &#123;</span><br><span class="line">    &#x2F;** 店+map映射等级,为了避免异常,原则上不允许其它平台使用default*&#x2F;</span><br><span class="line">    SNRouterPathPolicyDefault,</span><br><span class="line">    SNRouterPathPolicyLow,</span><br><span class="line">    SNRouterPathPolicyMiddle,</span><br><span class="line">    SNRouterPathPolicyHigh,</span><br><span class="line">    SNRouterPathPolicyMAX</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"> @&#123;</span><br><span class="line"> @(SNRouterPathPolicyDefault):  @&#123;@(targetPath): @&quot;value&quot;, ...&#125;</span><br><span class="line"> @(SNRouterPathPolicyLow)    :  @&#123;@&quot;key&quot;: @&quot;value&quot;, ...&#125;</span><br><span class="line"> @(SNRouterPathPolicyMiddle) :  @&#123;@&quot;key&quot;: @&quot;value&quot;, ...&#125;</span><br><span class="line"> @(SNRouterPathPolicyHigh)   :  @&#123;@&quot;key&quot;: @&quot;value&quot;, ...&#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
 
 <p>2.初始化路径映射关系</p>
@@ -388,23 +395,22 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;map:自己的映射关系字典</span><br><span class="line">&#x2F;&#x2F;policy:自定义的优先级别</span><br><span class="line">&#x2F;&#x2F;注意如果同等policy在添加是如果有重复的key会直接覆盖原有的</span><br><span class="line">[ShareRouter addPathMap:(NSDictionary *)map toPolicy:(SNRouterPathPolicy)policy];;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;自定义map</span><br><span class="line">&#x2F;&#x2F;RouterPathMap:将RouterPath映射成ViewController</span><br><span class="line">另外写了Router的Category,来添加映射关系,为了更加便于阅读,将每个组件隔离开来,</span><br><span class="line">然后通过NSDictory+Add的category来使字典相加,获取所有的map映射关系.</span><br><span class="line">- (NSDictionary *)maps &#123;</span><br><span class="line">    NSDictionary *module00 &#x3D; [NSDictionary dictionary];</span><br><span class="line">    NSDictionary *module01 &#x3D; [NSDictionary dictionary];</span><br><span class="line">    NSDictionary *module02 &#x3D; [NSDictionary dictionary];</span><br><span class="line">    NSDictionary *module03 &#x3D; [NSDictionary dictionary];</span><br><span class="line">   </span><br><span class="line">    module00 &#x3D; @&#123;</span><br><span class="line">                 @(SNRouterPath00000) : @&quot;ViewController0&quot;,</span><br><span class="line">                 @(SNRouterPath00001) : @&quot;ViewController0&quot;,</span><br><span class="line">                 @(SNRouterPath00002) : @&quot;ViewController0&quot;,</span><br><span class="line">                 @(SNRouterPath00003) : @&quot;ViewController0&quot;,</span><br><span class="line">                 @(SNRouterPath00004) : @&quot;ViewController0&quot;,</span><br><span class="line">                 &#125;;</span><br><span class="line">    module01 &#x3D; @&#123;</span><br><span class="line">                 @(SNRouterPath01000) : @&quot;ViewController1&quot;,</span><br><span class="line">                 @(SNRouterPath01001) : @&quot;ViewController1&quot;,</span><br><span class="line">                 @(SNRouterPath01002) : @&quot;ViewController1&quot;,</span><br><span class="line">                 @(SNRouterPath01003) : @&quot;ViewController1&quot;,</span><br><span class="line">                 @(SNRouterPath01004) : @&quot;ViewController1&quot;,</span><br><span class="line">                 &#125;;</span><br><span class="line">    module02 &#x3D; @&#123;</span><br><span class="line">                 @(SNRouterPath02000) : @&quot;ViewController2&quot;,</span><br><span class="line">                 @(SNRouterPath02001) : @&quot;ViewController2&quot;,</span><br><span class="line">                 @(SNRouterPath02002) : @&quot;ViewController2&quot;,</span><br><span class="line">                 @(SNRouterPath02003) : @&quot;ViewController2&quot;,</span><br><span class="line">                 @(SNRouterPath02004) : @&quot;ViewController2&quot;,</span><br><span class="line">                 &#125;;</span><br><span class="line">    module03 &#x3D; @&#123;</span><br><span class="line">                 @(SNRouterPath03000) : @&quot;ViewController3&quot;,</span><br><span class="line">                 @(SNRouterPath03001) : @&quot;ViewController3&quot;,</span><br><span class="line">                 @(SNRouterPath03002) : @&quot;ViewController3&quot;,</span><br><span class="line">                 @(SNRouterPath03003) : @&quot;ViewController3&quot;,</span><br><span class="line">                 @(SNRouterPath03004) : @&quot;ViewController3&quot;,</span><br><span class="line">                 &#125;;</span><br><span class="line">   </span><br><span class="line">   module00 &#x3D; [module00 add:module01, module02, module03, nil];</span><br><span class="line">   return module00;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
-<p>####2.1.2 参数传递说明</p>
-<p>为了方便使用者调用,使用链式语法.另外虽然ViewController是push还是present或者是其它的方式是由调用者决定的,但是我认为这个没有必要每一个地方都写同样的代码.可以把转场方式当做参数来传递,这同样是调用者决定的,所以你会看到一个非常简介的语法及调用方式</p>
+<h4 id="2-1-2-参数传递说明"><a href="#2-1-2-参数传递说明" class="headerlink" title="2.1.2 参数传递说明"></a>2.1.2 参数传递说明</h4><p>为了方便使用者调用,使用链式语法.另外虽然ViewController是push还是present或者是其它的方式是由调用者决定的,但是我认为这个没有必要每一个地方都写同样的代码.可以把转场方式当做参数来传递,这同样是调用者决定的,所以你会看到一个非常简介的语法及调用方式</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">入参,回调,转场方式,动画方式,一共四个维度,16种情况,本文不一一列出了</span><br><span class="line">&#x2F;&#x2F;push</span><br><span class="line">1.无入参,无回调</span><br><span class="line">	ShareRouter.target(SNRouterPath00001).push();</span><br><span class="line">2.无入参,有回调</span><br><span class="line">	ShareRouter.target(SNRouterPath01001).push().back(^(id data) &#123;</span><br><span class="line">            NSLog(@&quot;%@&quot;, data);</span><br><span class="line">    &#125;);</span><br><span class="line">3.有入参,无回调</span><br><span class="line">    ShareRouter.target(SNRouterPath02001)</span><br><span class="line">    .send(@&quot;有入参,无回调 入参为 nice&quot;)</span><br><span class="line">    .push();</span><br><span class="line">4.有入参,有回调</span><br><span class="line">     ShareRouter.target(SNRouterPath03001)</span><br><span class="line">     .send(@&quot;wupeng, send data&quot;).push()</span><br><span class="line">     .back(^(id data) &#123;</span><br><span class="line">         NSLog(@&quot;%@&quot;, data);</span><br><span class="line">      &#125;);</span><br><span class="line">      </span><br><span class="line">&#x2F;&#x2F;接收数据</span><br><span class="line">&#x2F;&#x2F;这里可以借鉴HHRouter将入参和回调与ViewController,动态绑定,这样</span><br><span class="line">ShareRouter.sendData &#x3D; @&quot;有入参,有回调, 入参为 wupeng&quot;;</span><br><span class="line">&#x2F;&#x2F;回调数据</span><br><span class="line">ShareRouter.backData &#x3D; @&quot;有入参,有回调, 回调为wupeng&quot;;</span><br></pre></td></tr></table></figure>
 
 <p>注:CurrentViewController:当前ViewController.这个其实是不属于Router的,但是确实这个app共有的,是任何地方的可以调用的.由于Router需要管理转场,所以使用了CurrentViewController.这个再UIWindow+Current的category中.所以router通过获取当前vc可以直接进行转场.</p>
-<p>####2.1.3 转场方式说明</p>
-<p>1.push</p>
+<h4 id="2-1-3-转场方式说明"><a href="#2-1-3-转场方式说明" class="headerlink" title="2.1.3 转场方式说明"></a>2.1.3 转场方式说明</h4><p>1.push</p>
 <p>2.pushAnimatedNO</p>
 <p>3.present</p>
 <p>4.presentAnimatedNO</p>
 <p>5.hiddenBottomBar</p>
 <p>6.presentCompletion</p>
-<p>###2.2SNOrder说明</p>
-<p>####2.2.1target<br>通过映射机制生成target类名的实例对象</p>
+<h3 id="2-2SNOrder说明"><a href="#2-2SNOrder说明" class="headerlink" title="2.2SNOrder说明"></a>2.2SNOrder说明</h3><h4 id="2-2-1target"><a href="#2-2-1target" class="headerlink" title="2.2.1target"></a>2.2.1target</h4><p>通过映射机制生成target类名的实例对象</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> 为了处理可能存在的高频方法调用,添加自动缓存target策略</span><br><span class="line"> 减少频繁创建和销毁target,减少内存</span><br><span class="line"> 1.缓存target个数最多50个</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">&#x2F;** @&#123;@&quot;className&quot; : @&#123;@&quot;target&quot;:  target&#125;,用于是否存在 *&#x2F;</span><br><span class="line">@property (nonatomic, strong) NSMutableDictionary *targetsDic;</span><br><span class="line"></span><br><span class="line">&#x2F;** @[target1, target2] 用于指定target清除 *&#x2F;</span><br><span class="line">@property (nonatomic, strong) NSMutableArray *targetsArr;</span><br></pre></td></tr></table></figure>
 
-<p>####2.2.2action<br>通过targetName生成对应的SEL<br>####2.2.3parameter<br>action所需要的parame,如果没有,不需要传入,或者传入nil<br>####2.2.4end<br>方法执行标志</p>
+<h4 id="2-2-2action"><a href="#2-2-2action" class="headerlink" title="2.2.2action"></a>2.2.2action</h4><p>通过targetName生成对应的SEL</p>
+<h4 id="2-2-3parameter"><a href="#2-2-3parameter" class="headerlink" title="2.2.3parameter"></a>2.2.3parameter</h4><p>action所需要的parame,如果没有,不需要传入,或者传入nil</p>
+<h4 id="2-2-4end"><a href="#2-2-4end" class="headerlink" title="2.2.4end"></a>2.2.4end</h4><p>方法执行标志</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line"> *We have a Class such as dog.</span><br><span class="line"> *We don&#39;t need import it.</span><br><span class="line"> *But we can use its method.</span><br><span class="line"> *Otherwise we&#39;d better add &quot;Target&quot; after class name</span><br><span class="line"> *such &quot;Dog&quot; -&gt; &quot;DogTarget&quot;</span><br><span class="line"> </span><br><span class="line"> *ShareOrder</span><br><span class="line"> *.target(@&quot;DogTarget&quot;)</span><br><span class="line"> *.action(@&quot;sing&quot;)</span><br><span class="line"> *.para(@&#123;@&quot;songName&quot; : @&quot;hao ri zi&quot;&#125;)</span><br><span class="line"> *.end();</span><br><span class="line"></span><br><span class="line"> *@interface DogTarget : NSObject</span><br><span class="line"> *@property (nonatomic, assign) NSInteger age;</span><br><span class="line"> *- (void)eat;</span><br><span class="line"> *- (void)sing:(NSDictionary *)songName;</span><br><span class="line"> *@end</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line">+ (instancetype)order;</span><br><span class="line"></span><br><span class="line">&#x2F;** target: NSString *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNOrder *(^ target)(NSString *targetName);</span><br><span class="line"></span><br><span class="line">&#x2F;** action: NSString *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNOrder *(^ action)(NSString *acitonName);</span><br><span class="line"></span><br><span class="line">&#x2F;** para: NSDictionary *&#x2F;</span><br><span class="line">@property (nonatomic, strong, readonly) SNOrder *(^ para)(NSDictionary *para);</span><br><span class="line"></span><br><span class="line">&#x2F;** 命令参数传递结束并执行, 返回值为aciton的返回值*&#x2F;</span><br><span class="line">@property (nonatomic, strong) id (^ end)(void);</span><br></pre></td></tr></table></figure>
 
 <p>以下是SNRouter的所有参数</p>
@@ -520,8 +526,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -536,7 +551,7 @@
               
                 <a href="/archives">
               
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -547,7 +562,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">5</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -558,7 +573,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -581,6 +596,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-路由需要做两件事"><span class="nav-number">1.</span> <span class="nav-text">一 路由需要做两件事</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-路由思维导图"><span class="nav-number">2.</span> <span class="nav-text">二 路由思维导图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-SNRouter说明"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 SNRouter说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-1-target说明"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1 target说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-2-参数传递说明"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.1.2 参数传递说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-3-转场方式说明"><span class="nav-number">2.1.3.</span> <span class="nav-text">2.1.3 转场方式说明</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2SNOrder说明"><span class="nav-number">2.2.</span> <span class="nav-text">2.2SNOrder说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1target"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1target</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2action"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.2action</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-3parameter"><span class="nav-number">2.2.3.</span> <span class="nav-text">2.2.3parameter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-4end"><span class="nav-number">2.2.4.</span> <span class="nav-text">2.2.4end</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
